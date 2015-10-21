@@ -1,5 +1,5 @@
 from elasticsearch import Connection
-from es_signer import ESConnection
+from signer import ESConnection
 from urlparse import urlparse
 
 
