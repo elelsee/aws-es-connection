@@ -3,20 +3,30 @@ from signer import ESConnection
 from urlparse import urlparse
 import time
 
+import os
+token = os.environ.get('AWS_SESSION_TOKEN')
+secret = os.environ.get('AWS_SECRET_ACCESS_KEY')
+key = os.environ.get('AWS_ACCESS_KEY_ID')
+
 
 class AWSConnection(Connection):
 
-    def __init__(self, host=None, region=None, **kwargs):
-        super(AWSConnection, self).__init__(host=host,
-                                            region=region,
-                                            **kwargs)
+    def __init__(self, host, region, **kwargs):
+        super(AWSConnection, self).__init__(host, region, **kwargs)
+        self.host = host
         self.region = region
+        self.kwargs = kwargs
 
     def perform_request(self, method, url, params=None,
                         body=None, timeout=None, ignore=()):
         start = time.time()
         host = urlparse(self.host).netloc.split(':')[0]
-        client = ESConnection(region=self.region, host=host)
+        client = ESConnection(region=self.region, 
+                              host=self.host,
+                              aws_access_key_id=key,
+                              aws_secret_access_key=secret,
+                              security_token=token,
+                              is_secure=False)
 
         if body:
             response = client.make_request(method, path=url, params=params, data=body)
