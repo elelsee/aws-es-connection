@@ -17,7 +17,7 @@ es.search()
  u'took': 1}
 
 es.info()
-{u'cluster_name': u'620726645985:testdomain5',
+{u'cluster_name': u'620726645985:domain',
  u'name': u'Bloodlust',
  u'status': 200,
  u'tagline': u'You Know, for Search',
