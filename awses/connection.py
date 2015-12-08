@@ -4,9 +4,6 @@ from urlparse import urlparse
 import time
 
 import os
-token = os.environ.get('AWS_SESSION_TOKEN')
-secret = os.environ.get('AWS_SECRET_ACCESS_KEY')
-key = os.environ.get('AWS_ACCESS_KEY_ID')
 
 
 class AWSConnection(Connection):
@@ -15,6 +12,9 @@ class AWSConnection(Connection):
         super(AWSConnection, self).__init__(host, region, **kwargs)
         self.host = host
         self.region = region
+        self.token = kwargs['session_token'] if 'session_token' in kwargs else os.environ.get('AWS_SESSION_TOKEN')
+        self.secret = kwargs['secret_key'] if 'secret_key' in kwargs else os.environ.get('AWS_SECRET_ACCESS_KEY')
+        self.key = kwargs['access_key'] if 'access_key' in kwargs else os.environ.get('AWS_ACCESS_KEY_ID')
         self.kwargs = kwargs
 
     def perform_request(self, method, url, params=None,
@@ -23,9 +23,9 @@ class AWSConnection(Connection):
         host = urlparse(self.host).netloc.split(':')[0]
         client = ESConnection(region=self.region, 
                               host=self.host,
-                              aws_access_key_id=key,
-                              aws_secret_access_key=secret,
-                              security_token=token,
+                              aws_access_key_id=self.key,
+                              aws_secret_access_key=self.secret,
+                              security_token=self.token,
                               is_secure=False)
 
         if body:
